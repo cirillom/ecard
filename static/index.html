@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>e-Card</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="phone" id="phone">
+
+    <div class="statusbar">
+      <span class="time">10:55</span>
+      <span class="statusicons">📶 🔋</span>
+    </div>
+
+    <div class="appbar">
+      <span class="appbar-title">e-Card</span>
+      <span class="appbar-icons">▤ ⋮</span>
+    </div>
+
+    <!-- ===================== VIEW: cartão do aluno ===================== -->
+    <div class="content" id="view-card" style="display:none;">
+
+      <img class="logo" src="usp-logo.svg" alt="Logo Universidade">
+      <div class="university-name">Universidade Exemplo</div>
+      <div class="student-type">Aluno de Graduação</div>
+
+      <div class="photo-wrap">
+        <img class="photo" id="card-photo" src="avatar-placeholder.svg" alt="Foto do aluno">
+      </div>
+
+      <div class="student-name" id="card-name">—</div>
+      <div class="student-ra" id="card-ra">—</div>
+      <div class="student-unit" id="card-institute">—</div>
+
+      <div class="qr-area">
+        <div class="qr-state" id="state-empty">
+          <div class="qr-placeholder" id="renew-btn">
+            <div class="qr-placeholder-icon">▦</div>
+            <div class="qr-placeholder-label">RENOVAR CODIGO QR</div>
+          </div>
+        </div>
+
+        <div class="qr-state" id="state-loading">
+          <div class="qr-placeholder qr-placeholder--faded">
+            <div class="qr-placeholder-icon">▦</div>
+          </div>
+          <div class="loading-overlay">
+            <div class="spinner"></div>
+            <div class="loading-text">Aguarde, atualizando token...</div>
+          </div>
+        </div>
+
+        <div class="qr-state" id="state-ready">
+          <img class="qr-image" src="qr-placeholder.svg" alt="QR Code">
+        </div>
+      </div>
+
+      <div class="qr-expiry" id="expiry-text">Código QR expirou</div>
+
+      <button class="link-btn" id="edit-btn">Editar dados deste usuário</button>
+    </div>
+
+    <!-- ===================== VIEW: formulário cadastro/edição ===================== -->
+    <div class="content form-content" id="view-form">
+
+      <div class="form-title" id="form-title">Novo usuário e-Card</div>
+
+      <form id="user-form">
+        <label class="form-label">Username (usado na URL)</label>
+        <input class="form-input" type="text" id="input-username" placeholder="ex: jsilva" required
+               pattern="[a-zA-Z0-9_-]+" title="Apenas letras, números, - e _">
+
+        <label class="form-label">Nome completo</label>
+        <input class="form-input" type="text" id="input-fullname" placeholder="Nome Sobrenome" required>
+
+        <label class="form-label">RA</label>
+        <input class="form-input" type="text" id="input-ra" placeholder="00000000" required>
+
+        <label class="form-label">Instituto / Unidade</label>
+        <input class="form-input" type="text" id="input-institute" placeholder="ex: EESC e ICMC" required>
+
+        <label class="form-label">Foto (opcional)</label>
+        <input class="form-input" type="file" id="input-photo" accept="image/png,image/jpeg,image/webp">
+
+        <button type="submit" class="submit-btn">Salvar</button>
+        <div class="form-msg" id="form-msg"></div>
+      </form>
+
+      <button class="link-btn" id="cancel-edit-btn" style="display:none;">Voltar para o cartão</button>
+    </div>
+
+  </div>
+
+<script src="app.js"></script>
+</body>
+</html>

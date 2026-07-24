@@ -1,0 +1,20 @@
+# Referência para o servidor (~/services/ecard/docker-compose.yml).
+
+services:
+  ecard:
+    image: ghcr.io/cirillom/ecard:latest
+    container_name: ecard
+    restart: always
+
+    environment:
+      - TZ=America/Sao_Paulo
+
+    volumes:
+      - /mnt/hdd/ecard/data:/data
+
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
