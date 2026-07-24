@@ -84,6 +84,13 @@ def allowed_photo(filename):
 
 # ---------- API ----------
 
+@app.get("/api/users")
+def api_list_users():
+    db = get_db()
+    rows = db.execute("SELECT * FROM users ORDER BY username").fetchall()
+    return jsonify([row_to_dict(r) for r in rows])
+
+
 @app.get("/api/users/<username>")
 def api_get_user(username):
     db = get_db()
@@ -166,7 +173,14 @@ def index_new_user():
 
 @app.get("/<username>")
 def index_view_user(username):
-    # Deixa o roteamento de "existe ou não" pro JS do front, via /api/users/<username>
+    # Se for um arquivo estático de verdade (app.js, style.css, svgs, fotos...),
+    # serve o arquivo em si em vez de cair no catch-all do SPA.
+    static_path = os.path.join(app.static_folder, username)
+    if os.path.isfile(static_path):
+        return app.send_static_file(username)
+
+    # Caso contrário, é uma rota de usuário (ex: /exemplo) — deixa o roteamento
+    # de "existe ou não" pro JS do front, via /api/users/<username>
     return app.send_static_file("index.html")
 
 
