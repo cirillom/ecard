@@ -19,6 +19,9 @@ const formTitle = document.getElementById('form-title');
 const userForm = document.getElementById('user-form');
 const formMsg = document.getElementById('form-msg');
 
+const menuBtn = document.getElementById('menu-btn');
+const menuDropdown = document.getElementById('menu-dropdown');
+
 const inputUsername = document.getElementById('input-username');
 const inputFullname = document.getElementById('input-fullname');
 const inputRa = document.getElementById('input-ra');
@@ -160,6 +163,7 @@ userForm.addEventListener('submit', async (e) => {
 });
 
 editBtn.addEventListener('click', async () => {
+  menuDropdown.classList.remove('open');
   const user = await loadUser(currentUsername);
   if (user) {
     fillFormForEdit(user);
@@ -174,6 +178,17 @@ cancelEditBtn.addEventListener('click', () => {
 });
 
 renewBtn.addEventListener('click', renewQr);
+
+menuBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  menuDropdown.classList.toggle('open');
+});
+
+document.addEventListener('click', (e) => {
+  if (!menuDropdown.contains(e.target) && e.target !== menuBtn) {
+    menuDropdown.classList.remove('open');
+  }
+});
 
 // ---------- Inicialização / roteamento ----------
 

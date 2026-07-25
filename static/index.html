@@ -10,14 +10,15 @@
 
   <div class="phone" id="phone">
 
-    <div class="statusbar">
-      <span class="time">10:55</span>
-      <span class="statusicons">📶 🔋</span>
-    </div>
-
     <div class="appbar">
       <span class="appbar-title">e-Card</span>
-      <span class="appbar-icons">▤ ⋮</span>
+      <div class="menu-wrap">
+        <span class="appbar-icons">▤</span>
+        <button class="menu-btn" id="menu-btn" aria-label="Menu">⋮</button>
+        <div class="menu-dropdown" id="menu-dropdown">
+          <button class="menu-item" id="edit-btn">Editar dados deste usuário</button>
+        </div>
+      </div>
     </div>
 
     <!-- ===================== VIEW: cartão do aluno ===================== -->
@@ -59,8 +60,6 @@
       </div>
 
       <div class="qr-expiry" id="expiry-text">Código QR expirou</div>
-
-      <button class="link-btn" id="edit-btn">Editar dados deste usuário</button>
     </div>
 
     <!-- ===================== VIEW: formulário cadastro/edição ===================== -->

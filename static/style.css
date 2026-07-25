@@ -4,39 +4,35 @@
   padding: 0;
 }
 
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
   font-family: 'Segoe UI', Roboto, Arial, sans-serif;
   background: #444;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  min-height: 100vh;
-  padding: 20px 0;
+  align-items: center;
 }
 
 .phone {
   width: 380px;
   max-width: 100%;
-  min-height: 780px;
+  height: 100dvh;
+  max-height: 100dvh;
   background: #f5a623;
   box-shadow: 0 0 30px rgba(0,0,0,0.4);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
   transition: background 0.3s ease;
 }
 
 .phone.state-empty,
 .phone.state-loading {
   background: #6b4a1f;
-}
-
-.statusbar {
-  background: #0d3b3e;
-  color: #fff;
-  font-size: 13px;
-  display: flex;
-  justify-content: space-between;
-  padding: 6px 14px;
 }
 
 .appbar {
@@ -47,41 +43,98 @@ body {
   align-items: center;
   padding: 14px 18px;
   font-size: 20px;
+  flex-shrink: 0;
 }
 
 .appbar-title { font-weight: 500; }
-.appbar-icons { font-size: 18px; letter-spacing: 8px; }
+
+.menu-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.appbar-icons { font-size: 18px; }
+
+.menu-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 4px 6px;
+}
+
+.menu-dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 6px;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  min-width: 220px;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.menu-dropdown.open { display: block; }
+
+.menu-item {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: #1a1a1a;
+  cursor: pointer;
+}
+
+.menu-item:hover { background: #f0f0f0; }
 
 .content {
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 24px 20px 30px;
+  justify-content: center;
+  padding: 16px 20px 20px;
   text-align: center;
+  overflow: hidden;
 }
 
-.logo { width: 140px; margin-bottom: 6px; }
+.logo { width: 120px; max-width: 30%; height: auto; margin-bottom: 4px; flex-shrink: 0; }
 
 .university-name {
-  font-size: 17px; font-weight: 600; color: #1a1a1a; margin-bottom: 14px;
+  font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px; flex-shrink: 0;
 }
 
 .student-type {
-  font-size: 20px; font-weight: 600; color: #1a1a1a; margin-bottom: 16px;
+  font-size: 17px; font-weight: 600; color: #1a1a1a; margin-bottom: 10px; flex-shrink: 0;
 }
 
 .photo-wrap {
-  width: 150px; height: 190px; background: #ccc; margin-bottom: 18px; overflow: hidden;
+  width: 22vh; height: 28vh; max-width: 140px; max-height: 170px;
+  background: #ccc; margin-bottom: 10px; overflow: hidden; flex-shrink: 1;
 }
 
 .photo { width: 100%; height: 100%; object-fit: cover; }
 
-.student-name { font-size: 19px; font-weight: 700; color: #1a1a1a; line-height: 1.3; margin-bottom: 6px; }
-.student-ra { font-size: 18px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
-.student-unit { font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 20px; }
+.student-name { font-size: 16px; font-weight: 700; color: #1a1a1a; line-height: 1.25; margin-bottom: 4px; flex-shrink: 0; }
+.student-ra { font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 3px; flex-shrink: 0; }
+.student-unit { font-size: 14px; font-weight: 600; color: #1a1a1a; margin-bottom: 12px; flex-shrink: 0; }
 
-.qr-area { position: relative; width: 220px; height: 220px; margin-bottom: 16px; }
+.qr-area {
+  position: relative;
+  width: 20vh; height: 20vh; max-width: 190px; max-height: 190px;
+  margin-bottom: 10px; flex-shrink: 1;
+}
 
 .qr-state {
   position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -128,30 +181,33 @@ body {
 .form-content {
   background: #fdf6e9;
   align-items: stretch;
+  justify-content: flex-start;
+  overflow-y: auto;
 }
 
 .form-title {
-  font-size: 20px; font-weight: 700; color: #1a1a1a;
-  margin-bottom: 20px; text-align: center;
+  font-size: 18px; font-weight: 700; color: #1a1a1a;
+  margin-bottom: 14px; text-align: center; flex-shrink: 0;
 }
 
-#user-form { display: flex; flex-direction: column; gap: 4px; }
+#user-form { display: flex; flex-direction: column; gap: 3px; }
 
 .form-label {
-  font-size: 13px; font-weight: 600; color: #444; margin-top: 12px;
+  font-size: 12px; font-weight: 600; color: #444; margin-top: 8px;
 }
 
 .form-input {
-  border: 1px solid #ccc; border-radius: 4px; padding: 10px 12px;
-  font-size: 15px; background: #fff;
+  border: 1px solid #ccc; border-radius: 4px; padding: 8px 10px;
+  font-size: 14px; background: #fff;
 }
 
 .submit-btn {
-  margin-top: 22px; background: #0d5c5f; color: #fff; border: none;
-  padding: 12px; border-radius: 4px; font-size: 16px; font-weight: 600; cursor: pointer;
+  margin-top: 16px; background: #0d5c5f; color: #fff; border: none;
+  padding: 10px; border-radius: 4px; font-size: 15px; font-weight: 600; cursor: pointer;
+  flex-shrink: 0;
 }
 .submit-btn:hover { background: #0a4a4c; }
 
-.form-msg { font-size: 13px; margin-top: 10px; min-height: 18px; text-align: center; }
+.form-msg { font-size: 13px; margin-top: 8px; min-height: 18px; text-align: center; flex-shrink: 0; }
 .form-msg.error { color: #b00020; }
 .form-msg.success { color: #1a7a2e; }
