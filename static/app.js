@@ -80,7 +80,7 @@ function renderCard(user) {
   cardName.textContent = user.full_name;
   cardRa.textContent = user.ra;
   cardInstitute.textContent = user.institute;
-  cardPhoto.src = user.photo_url ? user.photo_url : 'avatar-placeholder.svg';
+  cardPhoto.src = user.photo_url ? user.photo_url : '/avatar-placeholder.svg';
 
   if (user.qr_expiry) {
     setQrState('ready');
