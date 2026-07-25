@@ -9,7 +9,7 @@ Fotos enviadas ficam em `/data/photos` (volume), caminho salvo no SQLite.
 
 ## Funcionalidades
 
-- **`GET /`** — formulário para cadastrar um novo usuário (username, nome, RA, instituto, link do QR, foto)
+- **`GET /`** — formulário para cadastrar um novo usuário (username, nome, RA, instituto, conteúdo do QR, foto)
 - **`GET /<username>`** — exibe o e-Card daquele usuário (ou, se não existir, mostra o
   formulário de cadastro já com o username preenchido)
 - Botão "Editar dados deste usuário" na tela do cartão volta pro formulário, agora em modo edição

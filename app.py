@@ -3,7 +3,6 @@ import sqlite3
 import uuid
 from io import BytesIO
 from datetime import datetime
-from urllib.parse import urlparse
 
 import qrcode
 from qrcode.image.svg import SvgPathImage
@@ -44,14 +43,18 @@ def init_db():
             ra TEXT NOT NULL,
             institute TEXT NOT NULL,
             photo_path TEXT,
-            qr_link TEXT,
+            qr_content TEXT,
             qr_expiry TEXT
         )
         """
     )
     columns = {row[1] for row in conn.execute("PRAGMA table_info(users)")}
-    if "qr_link" not in columns:
-        conn.execute("ALTER TABLE users ADD COLUMN qr_link TEXT")
+    if "qr_content" not in columns:
+        conn.execute("ALTER TABLE users ADD COLUMN qr_content TEXT")
+        if "qr_link" in columns:
+            conn.execute(
+                "UPDATE users SET qr_content = qr_link WHERE qr_content IS NULL"
+            )
     conn.commit()
 
     # Usuário de exemplo, sempre com dados genéricos.
@@ -82,18 +85,13 @@ def row_to_dict(row):
         "ra": row["ra"],
         "institute": row["institute"],
         "photo_url": f"/photos/{row['photo_path']}" if row["photo_path"] else None,
-        "qr_link": row["qr_link"],
+        "qr_content": row["qr_content"],
         "qr_expiry": row["qr_expiry"],
     }
 
 
 def allowed_photo(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_PHOTO_EXT
-
-
-def is_valid_qr_link(value):
-    parsed = urlparse(value)
-    return parsed.scheme in {"http", "https"} and bool(parsed.netloc)
 
 
 # ---------- API ----------
@@ -122,12 +120,10 @@ def api_upsert_user(username):
     full_name = request.form.get("full_name", "").strip()
     ra = request.form.get("ra", "").strip()
     institute = request.form.get("institute", "").strip()
-    qr_link = request.form.get("qr_link", "").strip()
+    qr_content = request.form.get("qr_content", "").strip()
 
-    if not full_name or not ra or not institute or not qr_link:
+    if not full_name or not ra or not institute or not qr_content:
         return jsonify({"error": "missing_fields"}), 400
-    if not is_valid_qr_link(qr_link):
-        return jsonify({"error": "invalid_qr_link"}), 400
 
     photo_filename = None
     photo_file = request.files.get("photo")
@@ -145,14 +141,14 @@ def api_upsert_user(username):
     if existing:
         old_photo = existing["photo_path"] if not photo_filename else photo_filename
         db.execute(
-            "UPDATE users SET full_name=?, ra=?, institute=?, photo_path=?, qr_link=? WHERE username=?",
-            (full_name, ra, institute, old_photo, qr_link, username),
+            "UPDATE users SET full_name=?, ra=?, institute=?, photo_path=?, qr_content=? WHERE username=?",
+            (full_name, ra, institute, old_photo, qr_content, username),
         )
     else:
         db.execute(
-            "INSERT INTO users (username, full_name, ra, institute, photo_path, qr_link, qr_expiry) "
+            "INSERT INTO users (username, full_name, ra, institute, photo_path, qr_content, qr_expiry) "
             "VALUES (?, ?, ?, ?, ?, ?, ?)",
-            (username, full_name, ra, institute, photo_filename, qr_link, None),
+            (username, full_name, ra, institute, photo_filename, qr_content, None),
         )
     db.commit()
 
@@ -163,12 +159,12 @@ def api_upsert_user(username):
 @app.get("/api/users/<username>/qr.svg")
 def api_user_qr(username):
     db = get_db()
-    row = db.execute("SELECT qr_link FROM users WHERE username = ?", (username,)).fetchone()
-    if not row or not row["qr_link"]:
-        return jsonify({"error": "qr_link_not_found"}), 404
+    row = db.execute("SELECT qr_content FROM users WHERE username = ?", (username,)).fetchone()
+    if not row or not row["qr_content"]:
+        return jsonify({"error": "qr_content_not_found"}), 404
 
     qr = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_M, border=4)
-    qr.add_data(row["qr_link"])
+    qr.add_data(row["qr_content"])
     qr.make(fit=True)
     image = qr.make_image(image_factory=SvgPathImage)
     output = BytesIO()
@@ -183,8 +179,8 @@ def api_renew_qr(username):
     row = db.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchone()
     if not row:
         return jsonify({"error": "not_found"}), 404
-    if not row["qr_link"]:
-        return jsonify({"error": "qr_link_not_found"}), 400
+    if not row["qr_content"]:
+        return jsonify({"error": "qr_content_not_found"}), 400
 
     new_expiry = datetime.now().strftime("%d/%m/%Y 23:59")
     db.execute(
