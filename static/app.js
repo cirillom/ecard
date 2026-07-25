@@ -26,7 +26,9 @@ const inputUsername = document.getElementById('input-username');
 const inputFullname = document.getElementById('input-fullname');
 const inputRa = document.getElementById('input-ra');
 const inputInstitute = document.getElementById('input-institute');
+const inputQrLink = document.getElementById('input-qr-link');
 const inputPhoto = document.getElementById('input-photo');
+const qrImage = document.querySelector('.qr-image');
 const appManifest = document.getElementById('app-manifest');
 
 function configureManifest() {
@@ -82,7 +84,8 @@ function renderCard(user) {
   cardInstitute.textContent = user.institute;
   cardPhoto.src = user.photo_url ? user.photo_url : '/avatar-placeholder.svg';
 
-  if (user.qr_expiry) {
+  if (user.qr_expiry && user.qr_link) {
+    qrImage.src = `/api/users/${encodeURIComponent(user.username)}/qr.svg?expiry=${encodeURIComponent(user.qr_expiry)}`;
     setQrState('ready');
     expiryText.textContent = `Código QR expira em ${user.qr_expiry}`;
   } else {
@@ -97,9 +100,11 @@ async function renewQr() {
     const res = await fetch(`/api/users/${encodeURIComponent(currentUsername)}/renew-qr`, {
       method: 'POST',
     });
+    if (!res.ok) throw new Error('QR renewal failed');
     const data = await res.json();
     // Pequeno delay pra manter a sensação de "carregando", igual ao app original
     setTimeout(() => {
+      qrImage.src = `/api/users/${encodeURIComponent(currentUsername)}/qr.svg?expiry=${encodeURIComponent(data.qr_expiry)}`;
       setQrState('ready');
       expiryText.textContent = `Código QR expira em ${data.qr_expiry}`;
     }, 1200);
@@ -115,6 +120,7 @@ function fillFormForEdit(user) {
   inputFullname.value = user.full_name;
   inputRa.value = user.ra;
   inputInstitute.value = user.institute;
+  inputQrLink.value = user.qr_link || '';
   formTitle.textContent = `Editando: ${user.username}`;
   cancelEditBtn.style.display = 'inline-block';
 }
@@ -142,6 +148,7 @@ userForm.addEventListener('submit', async (e) => {
   fd.append('full_name', inputFullname.value.trim());
   fd.append('ra', inputRa.value.trim());
   fd.append('institute', inputInstitute.value.trim());
+  fd.append('qr_link', inputQrLink.value.trim());
   if (inputPhoto.files[0]) {
     fd.append('photo', inputPhoto.files[0]);
   }
