@@ -1,7 +1,7 @@
 import os
 import sqlite3
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from flask import Flask, request, jsonify, send_from_directory, g
 
@@ -145,13 +145,13 @@ def api_upsert_user(username):
 
 @app.post("/api/users/<username>/renew-qr")
 def api_renew_qr(username):
-    """Simula a renovação do token/QR: define nova data de expiração (+3 dias)."""
+    """Simula a renovação do token/QR: expira no fim do dia atual."""
     db = get_db()
     row = db.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchone()
     if not row:
         return jsonify({"error": "not_found"}), 404
 
-    new_expiry = (datetime.now() + timedelta(days=3)).strftime("%d/%m/%Y 23:59")
+    new_expiry = datetime.now().strftime("%d/%m/%Y 23:59")
     db.execute(
         "UPDATE users SET qr_expiry=? WHERE username=?", (new_expiry, username)
     )
