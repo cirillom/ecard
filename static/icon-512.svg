@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="e-Card">
+  <rect width="512" height="512" rx="108" fill="#ff9e1b"/>
+  <rect x="68" y="58" width="376" height="396" rx="74" fill="#038390"/>
+  <rect x="112" y="164" width="282" height="26" rx="13" fill="#fff"/>
+  <rect x="112" y="220" width="210" height="26" rx="13" fill="#fff"/>
+  <rect x="112" y="276" width="250" height="26" rx="13" fill="#fff"/>
+  <rect x="112" y="332" width="176" height="26" rx="13" fill="#fff"/>
+</svg>

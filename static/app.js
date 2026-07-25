@@ -27,6 +27,13 @@ const inputFullname = document.getElementById('input-fullname');
 const inputRa = document.getElementById('input-ra');
 const inputInstitute = document.getElementById('input-institute');
 const inputPhoto = document.getElementById('input-photo');
+const appManifest = document.getElementById('app-manifest');
+
+function configureManifest() {
+  if (!appManifest) return;
+  const startPath = `${window.location.pathname}${window.location.search}` || '/';
+  appManifest.href = `/manifest.webmanifest?start=${encodeURIComponent(startPath)}`;
+}
 
 // Username vem do path: "/" -> null (cadastro novo) ; "/joaosilva" -> "joaosilva"
 function getUsernameFromPath() {
@@ -189,6 +196,16 @@ document.addEventListener('click', (e) => {
     menuDropdown.classList.remove('open');
   }
 });
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {
+      // PWA enhancement only; the app still works without the service worker.
+    });
+  });
+}
+
+configureManifest();
 
 // ---------- Inicialização / roteamento ----------
 

@@ -164,6 +164,38 @@ def serve_photo(filename):
     return send_from_directory(PHOTOS_DIR, filename)
 
 
+@app.get("/manifest.webmanifest")
+def serve_manifest():
+    start_path = request.args.get("start", "/").strip() or "/"
+    if not start_path.startswith("/"):
+      start_path = "/" + start_path
+    manifest = {
+        "name": "e-Card",
+        "short_name": "e-Card",
+        "description": "Carteirinha digital e-Card para visualização de usuário e QR code.",
+        "start_url": start_path,
+        "scope": "/",
+        "display": "standalone",
+        "background_color": "#ff9e1b",
+        "theme_color": "#038390",
+        "icons": [
+            {
+                "src": "/icon-192.svg",
+                "sizes": "192x192",
+                "type": "image/svg+xml",
+                "purpose": "any",
+            },
+            {
+                "src": "/icon-512.svg",
+                "sizes": "512x512",
+                "type": "image/svg+xml",
+                "purpose": "any",
+            },
+        ],
+    }
+    return jsonify(manifest)
+
+
 # ---------- Front-end (SPA simples) ----------
 
 @app.get("/")
